@@ -1,0 +1,11 @@
+com\dsa\chat\api\chatapp\Components\WsHandler$1.class
+com\dsa\chat\api\chatapp\Components\WsEvent.class
+com\dsa\chat\api\chatapp\Config\UserHandshakeHandler.class
+com\dsa\chat\api\chatapp\Config\WsConfig.class
+com\dsa\chat\api\chatapp\Components\RegistrationRequest.class
+com\dsa\chat\api\chatapp\Components\WsHandler.class
+com\dsa\chat\api\chatapp\Components\MessagePojo.class
+com\dsa\chat\api\chatapp\Config\CorsConfig.class
+com\dsa\chat\api\chatapp\Components\EventType.class
+com\dsa\chat\api\chatapp\Config\CorsConfig$1.class
+com\dsa\chat\api\chatapp\ChatappApplication.class
