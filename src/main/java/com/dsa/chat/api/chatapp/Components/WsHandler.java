@@ -88,15 +88,6 @@ public class WsHandler {
     }
 
     @EventListener
-    public void handleConnectEvent(SessionConnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = headerAccessor.getSessionId();
-
-        sendUserSessionInstance(sessionId);
-        //System.out.println("User connected with session ID: " + sessionId);
-    }
-
-    @EventListener
     public void handleDisconnectEvent(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
@@ -154,18 +145,5 @@ public class WsHandler {
         Map<String, String> message = new HashMap<>();
         message.put(event.getUsername(), event.getMessage());
         messagingTemplate.convertAndSend("/topic/messages", objectMapper.writeValueAsString(message));
-    }
-
-    private void sendUserSessionInstance(String sessionId){
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> message = new HashMap<>();
-        message.put("sessionId", sessionId);
-        try {
-            messagingTemplate.convertAndSend("/topic/user-session", objectMapper.writeValueAsString(message));
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
     }
 }
