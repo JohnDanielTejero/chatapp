@@ -1,4 +1,3 @@
-com\dsa\chat\api\chatapp\Components\WsHandler$1.class
 com\dsa\chat\api\chatapp\Components\WsEvent.class
 com\dsa\chat\api\chatapp\Config\UserHandshakeHandler.class
 com\dsa\chat\api\chatapp\Config\WsConfig.class

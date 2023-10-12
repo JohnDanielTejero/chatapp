@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class WsHandler {
 
-    private final Map<String, Hashtable<String, String>> userSessions = new ConcurrentHashMap<>();
     private Hashtable<String, String> users = new Hashtable<>();
 
     private final Queue<RegistrationRequest> registrationQueue = new LinkedList<>();
@@ -40,18 +39,12 @@ public class WsHandler {
     @SendToUser("/topic/registration-status")
     public String registerUser(Map<String, String> registrationData, StompHeaderAccessor accessor, Principal principal) throws JsonProcessingException {
         // Create a registration request object
-        String username = registrationData.get("username");
-        String sessionId = accessor.getSessionId();
+        String username = registrationData.get("username"); // Daniel
+        String sessionId = accessor.getSessionId(); //yung random letter
         RegistrationRequest request = new RegistrationRequest(username, sessionId);
 
-        // Ensure a user session exists for this session
-        userSessions.computeIfAbsent(sessionId, k -> new Hashtable<>());
-
-        // Register the user in the user session
-        userSessions.get(sessionId).put(username, sessionId);
-
         registrationQueue.offer(request);
-        String registrationResponse = processRegistrationRequest(request);
+        String registrationResponse = processRegistrationRequest(request); // "{"Success" : "Daniel"}" 
         if (registrationResponse.contains("Success")) {
             sendUserJoinMessage(username);
         }
@@ -77,12 +70,12 @@ public class WsHandler {
                 response.put("Success", request.getUsername());
             }
         }
+        
         return objectMapper.writeValueAsString(response);
     }
 
    
     @MessageMapping("/chat")
-    //@SendTo("/topic/messages")
     public void handleChatMessage(Map<String, String> messageData, StompHeaderAccessor accessor) {
         String sessionId = accessor.getSessionId();
         String username = getUsernameForSession(sessionId);
@@ -153,39 +146,10 @@ public class WsHandler {
     }
 
     private void processEvent(WsEvent event) throws MessagingException, JsonProcessingException {
-      
-
-        switch (event.getEventType()) {
-            case CHAT_MESSAGE:
-                handleChatMessage(event);
-                break;
-            case USER_JOIN:
-                handleUserJoin(event);
-                break;
-            case USER_DISCONNECT:
-                handleUserDisconnect(event);
-                break;
-            default:
-                break;
-        }
-      
+        handleMessageEvent(event);
     }
 
-    private void handleChatMessage(WsEvent event) throws MessagingException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> message = new HashMap<>();
-        message.put(event.getUsername(), event.getMessage());
-        messagingTemplate.convertAndSend("/topic/messages", objectMapper.writeValueAsString(message));
-    }
-
-    private void handleUserJoin(WsEvent event) throws MessagingException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> message = new HashMap<>();
-        message.put(event.getUsername(), event.getMessage());
-        messagingTemplate.convertAndSend("/topic/messages", objectMapper.writeValueAsString(message));
-    }
-
-    private void handleUserDisconnect(WsEvent event) throws MessagingException, JsonProcessingException {
+    private void handleMessageEvent(WsEvent event) throws MessagingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> message = new HashMap<>();
         message.put(event.getUsername(), event.getMessage());
